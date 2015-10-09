@@ -2,28 +2,28 @@
 # Then unzip it in the working directory, making sure 
 #"household_power_consumption.txt" is there
 # Reading data fromy the working directory
-d = read.table("household_power_consumption.txt", header = TRUE,  sep=";")
+d = read.table("household_power_consumption.txt", header = TRUE,  
+               sep=";",na.strings = c("?",""))
 
-#converting dates and times to real date and time format and d$Global_active_power to numeric
-d$Date=as.Date(d$Date, format="%d/%m/%Y")
-d$Time=as.character(d$Time)
-d$Time=strptime(d$Time, "%H:%M:%S")
-d$Time=strftime(d$Time, "%H:%M:%S")
-d$Global_active_power=as.numeric(levels(d$Global_active_power))[d$Global_active_power]
+#choosing obervations only when date is either 2007-02-01 or 2007-02-02.
+d2 = subset(d, Date== "1/2/2007"|Date=="2/2/2007")
+
+#converting dates and times to real date and time format and others to numeric
+d2$Date=as.Date(d2$Date, format="%d/%m/%Y")
+d2$timetemp = strptime(d2$Time, format= "%H:%M:%S")
+d2$Time = format(as.POSIXct(strptime(d2$timetemp,"%Y-%m-%d %H:%M:%S",
+            tz="")), format = "%H:%M:%S")
+d2$Global_active_power=as.numeric(levels(d2$Global_active_power))[d2$Global_active_power]
 
 #making sure the class conversions have worked
-sapply(d,class)
-
-# turning the data.frame to table df format (a personal choice for more ease of use)
-#choosing obervations only when date is either 2007-02-01 or 2007-02-02.
-d = subset(d, Date== "2007-02-01"|Date=="2007-02-02")
+sapply(d2,class)
 
 # making a new variable as the combination of date and time
-dateTime <- paste(d$Date, d$Time)
-d$DateTime <- as.POSIXct(dateTime)
+dateTime <- paste(d2$Date, d2$Time)
+d2$DateTime <- as.POSIXct(dateTime)
 
 #making plot 2
-plot(d$Global_active_power ~d$DateTime , xlab="", type="l",
+plot(d2$Global_active_power ~d2$DateTime , xlab="", type="l",
      ylab="Global Active Power (kilowatts)")
 
 # saving plot
