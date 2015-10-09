@@ -21,3 +21,6 @@ d = subset(d, Date== "2007-02-01"|Date=="2007-02-02")
 #making plot 1
 hist(d$Global_active_power, col="red", main="Global Active Power",
      xlab="Global Active Power (kilowatts)")
+# saving plot
+dev.copy(png, file="plot1.png", height=480, width=480)
+dev.off()
